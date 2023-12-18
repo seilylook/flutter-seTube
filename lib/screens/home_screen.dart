@@ -3,16 +3,28 @@ import 'package:se_tube/apis/youtube_api.dart';
 import 'package:se_tube/model/video_model.dart';
 import 'package:se_tube/widgets/custom_youtube_player.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('SE Tube'),
+        title: const Text(
+          'SE Tube',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+          ),
+        ),
         backgroundColor: Colors.black,
       ),
       body: FutureBuilder<List<VideoModel>>(
@@ -22,7 +34,7 @@ class HomeScreen extends StatelessWidget {
             return Center(
               child: Text(
                 snapshot.error.toString(),
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                 ),
               ),
@@ -30,16 +42,21 @@ class HomeScreen extends StatelessWidget {
           }
 
           if (!snapshot.hasData) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
 
-          return ListView(
-            physics: BouncingScrollPhysics(),
-            children: snapshot.data!
-                .map((e) => CustomYouTubePlayer(videoModel: e))
-                .toList(),
+          return RefreshIndicator(
+            onRefresh: () async {
+              setState(() {});
+            },
+            child: ListView(
+              physics: const BouncingScrollPhysics(),
+              children: snapshot.data!
+                  .map((e) => CustomYouTubePlayer(videoModel: e))
+                  .toList(),
+            ),
           );
         },
       ),
